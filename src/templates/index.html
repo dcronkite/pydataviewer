@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {{bootstrap.load_css()}}
+</head>
+<body>
+    <form action="#" enctype="multipart/form-data" method="post">
+        <div class="card">
+            <div class="card-header">Choose Files to Upload</div>
+            <div class="card-body">{{ form.files }}</div>
+        </div>
+        <div class="card">
+            <div class="card-header">Specify File Path</div>
+            <div class="card-body">{{ form.path(size=100) }}</div>
+        </div>
+     {{ form.submit }}
+    </form>
+
+{{ bootstrap.load_js()}}
+</body>
+</html>

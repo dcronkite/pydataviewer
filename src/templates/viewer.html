@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {{bootstrap.load_css()}}
+    <style>
+
+    </style>
+</head>
+<body>
+
+<div>
+    {% for message in messages %}
+        <div class="alert alert-{{message.level}}">{{message.message}}</div>
+    {%endfor%}
+</div>
+
+<form action="#" enctype="multipart/form-data" method="post">
+    {{ form.column }}
+    {{ form.search }}
+    {{ form.submit }}
+    <div class="row">
+        {% for dat in data %}
+        {% if dat.label == 'text' %}
+        <div class="card col-3 p-3">
+            <div class="card-header text-center">{{dat.column}}</div>
+            <div class="card-body text-center">{{dat.value}}</div>
+        </div>
+        {% elif dat.label == 'textarea' %}
+
+        <div class="card col-6 p-3">
+            <div class="card-header text-center">{{dat.column}}</div>
+            <div class="card-body">{{dat.value}}</div>
+        </div>
+        {% else %}
+        <div class="card"></div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</form>
+
+{{ bootstrap.load_js()}}
+</body>
+</html>

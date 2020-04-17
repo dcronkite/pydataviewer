@@ -1,0 +1,5 @@
+pandas
+flask_wtf
+wtforms
+flask
+bootstrap_flask
