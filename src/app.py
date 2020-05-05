@@ -71,12 +71,28 @@ class FileReader:
                 self.data = pd.read_csv(data, encoding='cp1252')
         elif fn.endswith('.sas7bdat'):
             self.data = pd.read_sas(data, encoding='cp1252')
+        elif os.path.isdir(data):
+            self.data = self._read_directory(data)
         else:
-            raise NotImplementedError('Extension not recognized or not implemented.')
+            raise NotImplementedError(f'Extension not recognized or not implemented: {data}')
         self.size = self.data.shape[0]
         self.columns = self.data.columns
         self._error = None
         self._level = 'warning'  # error level
+
+    def _read_directory(self, directory):
+        records = []
+        for filename in os.listdir(directory):
+            records.append(self._read_file(filename, os.path.join(directory, filename)))
+        return pd.DataFrame(records)
+
+    def _read_file(self, filename, fp):
+        if fp.endswith('.txt'):
+            with open(fp) as fh:
+                text = fh.read()
+            return {'filename': filename, 'text': text}
+        else:
+            raise NotImplementedError(f'Extension not recognized or not implemented: {filename}')
 
     @property
     def error(self):
