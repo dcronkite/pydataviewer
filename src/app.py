@@ -15,14 +15,17 @@ fr = None
 
 class GeneralForm(FlaskForm):
     files = MultipleFileField(label='Upload File')
-    path = StringField(label='Path',)
+    path = StringField(label='Path', )
     submit = SubmitField('Submit')
 
 
 class ViewerForm(FlaskForm):
     column = SelectField(label='Column')
     search = StringField(label='Search')
-    submit = SubmitField('Submit')
+    ftsearch = SubmitField('Full-text Search')
+    submit = SubmitField('Exact Match')
+    prev = SubmitField('Previous')
+    next = SubmitField('Next')
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -50,7 +53,15 @@ def viewer():
     if request.method == 'POST':  # search or next
         label = form.column.data
         search = form.search.data
-        return render_template('viewer.html', form=form, data=fr.search(label, search), messages=[fr.error])
+        if form.submit.data:
+            return render_template('viewer.html', form=form, data=fr.search(label, search), messages=[fr.error])
+        elif form.ftsearch.data:
+            return render_template('viewer.html', form=form, data=fr.ft_search(label, search), messages=[fr.error])
+        elif form.next.data:
+            return render_template('viewer.html', form=form, data=fr.next(), messages=[fr.error])
+        elif form.prev.data:
+            return render_template('viewer.html', form=form, data=fr.prev(), messages=[fr.error])
+
     return render_template('viewer.html', form=form, data=fr.reset(), messages=[fr.error])
 
 
@@ -134,16 +145,24 @@ class FileReader:
     def prev(self):
         return self._move(-1)
 
-    def search(self, label, value):
+    def _search_handler(self, subquery):
         try:
-            self.subquery_indices = list(self.data[self.data[label] == value].index)
+            self.subquery_indices = list(subquery.index)
         except Exception as e:
             self.error = f'Fatal error in search: {e}'
         if len(self.subquery_indices) == 0:
             self.error = 'No matches'
             return self._move(0)
+        else:
+            self.error = f'Found {len(self.subquery_indices)} matches.'
         self.subquery_index = 0
         return self.get_form_data_for_row(self.subquery_indices[self.subquery_index])
+
+    def ft_search(self, label, value):
+        return self._search_handler(self.data[self.data[label].str.contains(value, regex=True, case=False)])
+
+    def search(self, label, value):
+        return self._search_handler(self.data[self.data[label] == value])
 
     def get_form_data_for_row(self, idx):
         results = []

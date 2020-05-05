@@ -12,33 +12,38 @@
 
 <div>
     {% for message in messages %}
-        <div class="alert alert-{{message.level}}">{{message.message}}</div>
+    <div class="alert alert-{{message.level}}">{{message.message}}</div>
     {%endfor%}
 </div>
 
 <form action="#" enctype="multipart/form-data" method="post">
     {{ form.column }}
     {{ form.search }}
+    {{ form.ftsearch }}
     {{ form.submit }}
-    <div class="row">
-        {% for dat in data %}
-        {% if dat.label == 'text' %}
-        <div class="card col-3 p-3">
-            <div class="card-header text-center">{{dat.column}}</div>
-            <div class="card-body text-center">{{dat.value}}</div>
-        </div>
-        {% elif dat.label == 'textarea' %}
-
-        <div class="card col-6 p-3">
-            <div class="card-header text-center">{{dat.column}}</div>
-            <div class="card-body">{{dat.value}}</div>
-        </div>
-        {% else %}
-        <div class="card"></div>
-        {% endif %}
-        {% endfor %}
-    </div>
+    {{ form.prev }}
+    {{ form.next }}
 </form>
+
+
+<div class="row">
+    {% for dat in data %}
+    {% if dat.label == 'text' %}
+    <div class="card col-3 p-3">
+        <div class="card-header text-center">{{dat.column}}</div>
+        <div class="card-body text-center">{{dat.value}}</div>
+    </div>
+    {% elif dat.label == 'textarea' %}
+
+    <div class="card col-6 p-3">
+        <div class="card-header text-center">{{dat.column}}</div>
+        <div class="card-body">{{dat.value}}</div>
+    </div>
+    {% else %}
+    <div class="card"></div>
+    {% endif %}
+    {% endfor %}
+</div>
 
 {{ bootstrap.load_js()}}
 </body>
